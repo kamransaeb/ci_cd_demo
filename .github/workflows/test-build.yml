@@ -1,0 +1,79 @@
+# 1. (Name of the Workflow)
+name: Test and Build
+
+# 2. (Trigger Events)
+on:
+  pull_request:
+    branches:
+      - main
+      - dev
+  push:
+    branches:
+      - main
+      - dev
+# 3. (Jobs)
+jobs:
+  main:
+    runs-on: macos-latest
+
+    # 4. (Steps)
+    steps:
+
+      # 5. (Clone the Repository, actions/checkout@v4 configuration is a set of abstracted and bundled settings that make it easier to clone a repository in your workflows, you can find more actions in the marketplace.)
+      - name: Clone repository
+        uses: actions/checkout@v4
+
+      # 6. (Setup Java)
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: "18.x"
+
+      # 7. (Setup Flutter)
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          flutter-version: '3.32.4'
+
+      # 8. (Get Flutter Packages)
+      - name: Get Flutter packages
+        run: |
+          flutter pub get
+          
+      # 9. (Check for Lints)
+      - name: Check for lints
+        run: |
+          flutter analyze
+
+      # 10. (Run all Tests)
+      - name: Run all tests
+        run: |
+          flutter test
+
+      # 11. (Build APK)
+      - name: Build APK
+        run: |
+          flutter build apk
+
+      # 12. (Build IPA)
+      - name: Build IPA
+        run: |
+          flutter build ipa --no-codesign
+
+      # 13. (Compress Archives and IPAs)
+      - name: Compress Archives and IPAs
+        run: |
+          cd build
+          tar -czf ios_build.tar.gz ios
+
+      # 14. (Upload Artifacts)
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Releases
+          path: |
+            build/app/outputs/flutter-apk/app-release.apk
+            build/ios_build.tar.gz
+        
