@@ -1,10 +1,10 @@
 # ci_cd_demo
 
-A new Flutter project.
+A Demonstration on how to do CI/CD using github actions.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+This project can be used as starting point for a CI/CD based application.
 
 A few resources to get you started if this is your first Flutter project:
 
